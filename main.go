@@ -21,7 +21,7 @@ func main() {
 
 	c := to.getCards()
 
-	cards := GetCommentsForCards(&c)
+	cards := ProcessCardsForExporting(&c)
 	ExportCardsToFile(cards)
 
 	co := setupClubhouseOptions()

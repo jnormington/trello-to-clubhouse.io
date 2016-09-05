@@ -80,6 +80,8 @@ func (t *TrelloOptions) getListsAndPromptUser() {
 }
 
 func (t TrelloOptions) getCards() []trello.Card {
+	fmt.Println("Please wait while we retrieve your cards... This might take a few minutes.")
+
 	cards, err := t.List.Cards()
 	if err != nil {
 		log.Fatal(err)
