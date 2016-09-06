@@ -8,11 +8,12 @@ import (
 )
 
 type ClubhouseOptions struct {
-	Project                 *ch.Project
-	State                   *ch.State
-	ClubhouseEntry          *ch.Clubhouse
-	StoryType               string
-	AddCommentToTrelloStory bool
+	Project                  *ch.Project
+	State                    *ch.State
+	ClubhouseEntry           *ch.Clubhouse
+	StoryType                string
+	AddCommentWithTrelloLink bool
+	ImportUser               *ch.User
 }
 
 func setupClubhouseOptions() *ClubhouseOptions {
@@ -22,6 +23,7 @@ func setupClubhouseOptions() *ClubhouseOptions {
 
 	co.getProjectsAndPromptUser()
 	co.getWorkflowStatesAndPromptUser()
+	co.getUsersAndPromptUser()
 	co.promptUserForStoryType()
 	co.promptUserIfAddCommentWithTrelloLink()
 
@@ -42,7 +44,7 @@ func (co *ClubhouseOptions) promptUserIfAddCommentWithTrelloLink() {
 	}
 
 	if i == 0 {
-		co.AddCommentToTrelloStory = true
+		co.AddCommentWithTrelloLink = true
 	}
 }
 
@@ -63,6 +65,25 @@ func (co *ClubhouseOptions) getProjectsAndPromptUser() {
 	}
 
 	co.Project = &projects[i]
+}
+
+func (co *ClubhouseOptions) getUsersAndPromptUser() {
+	users, err := co.ClubhouseEntry.ListUsers()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println("Please select the user account to import the cards as")
+	for i, u := range users {
+		fmt.Printf("[%d] %s\n", i, u.Name)
+	}
+
+	i := promptUserSelectResource()
+	if i >= len(users) {
+		log.Fatal(errOutOfRange)
+	}
+
+	co.ImportUser = &users[i]
 }
 
 func (co *ClubhouseOptions) getWorkflowStatesAndPromptUser() {
