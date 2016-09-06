@@ -8,10 +8,11 @@ import (
 )
 
 type ClubhouseOptions struct {
-	Project        *ch.Project
-	State          *ch.State
-	ClubhouseEntry *ch.Clubhouse
-	StoryType      string
+	Project                 *ch.Project
+	State                   *ch.State
+	ClubhouseEntry          *ch.Clubhouse
+	StoryType               string
+	AddCommentToTrelloStory bool
 }
 
 func setupClubhouseOptions() *ClubhouseOptions {
@@ -22,8 +23,27 @@ func setupClubhouseOptions() *ClubhouseOptions {
 	co.getProjectsAndPromptUser()
 	co.getWorkflowStatesAndPromptUser()
 	co.promptUserForStoryType()
+	co.promptUserIfAddCommentWithTrelloLink()
 
 	return &co
+}
+
+func (co *ClubhouseOptions) promptUserIfAddCommentWithTrelloLink() {
+	opts := []string{"Yes", "No"}
+
+	fmt.Println("Would you like a comment added with the original trello ticket link?")
+	for i, b := range opts {
+		fmt.Printf("[%d] %s\n", i, b)
+	}
+
+	i := promptUserSelectResource()
+	if i >= len(opts) {
+		log.Fatal(errOutOfRange)
+	}
+
+	if i == 0 {
+		co.AddCommentToTrelloStory = true
+	}
 }
 
 func (co *ClubhouseOptions) getProjectsAndPromptUser() {
@@ -39,7 +59,7 @@ func (co *ClubhouseOptions) getProjectsAndPromptUser() {
 
 	i := promptUserSelectResource()
 	if i >= len(projects) {
-		log.Fatal("Number input is out of range ?")
+		log.Fatal(errOutOfRange)
 	}
 
 	co.Project = &projects[i]

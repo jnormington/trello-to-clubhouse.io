@@ -24,6 +24,7 @@ type Card struct {
 	Comments  []Comment  `json:"comments"`
 	Tasks     []Task     `json:"checklists"`
 	Position  float32    `json:"position"` //So we can process the cards in order from trello list
+	ShortURL  string     `json:"url"`
 }
 
 type Task struct {
@@ -50,6 +51,7 @@ func ProcessCardsForExporting(crds *[]trello.Card) *[]Card {
 		c.Creator, c.CreatedAt, c.Comments = getCommentsAndCardCreator(&card)
 		c.Tasks = getCheckListsForCard(&card)
 		c.Position = card.Pos
+		c.ShortURL = card.ShortUrl
 
 		cards = append(cards, c)
 	}
