@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	ch "github.com/MCBrandenburg/clubhouse-go"
+	ch "github.com/jnormington/clubhouse-go"
 )
 
 type ClubhouseOptions struct {

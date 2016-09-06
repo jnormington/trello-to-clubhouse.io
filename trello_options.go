@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"strings"
 
-	trello "github.com/Luzifer/go-trello"
+	trello "github.com/jnormington/go-trello"
 )
 
 // TrelloOptions holds the links to the board and list

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	ch "github.com/MCBrandenburg/clubhouse-go"
+	ch "github.com/jnormington/clubhouse-go"
 )
 
 var outputFormat = "%-40s %-17s %s\n"
@@ -27,7 +27,7 @@ func ImportCardsIntoClubhouse(cards *[]Card, opts *ClubhouseOptions) {
 
 func buildClubhouseStory(card *Card, opts *ClubhouseOptions) *ch.CreateStory {
 
-	s := ch.CreateStory{
+	return &ch.CreateStory{
 		ProjectID:       opts.Project.ID,
 		WorkflowStateID: opts.State.ID,
 		RequestedByID:   opts.ImportUser.ID,
@@ -35,21 +35,13 @@ func buildClubhouseStory(card *Card, opts *ClubhouseOptions) *ch.CreateStory {
 
 		Name:        card.Name,
 		Description: card.Desc,
+		Deadline:    card.DueDate,
+		CreatedAt:   card.CreatedAt,
 
 		Labels:   *buildLabels(card),
 		Tasks:    *buildTasks(card),
 		Comments: *buildComments(card, opts.AddCommentWithTrelloLink),
 	}
-
-	if card.DueDate != nil {
-		s.Deadline = card.DueDate
-	}
-
-	if card.CreatedAt != nil {
-		s.CreatedAt = card.CreatedAt
-	}
-
-	return &s
 }
 
 func buildComments(card *Card, addCommentWithTrelloLink bool) *[]ch.CreateComment {
