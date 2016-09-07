@@ -12,19 +12,45 @@ import (
 // TrelloOptions holds the links to the board and list
 // from the trello api calls that the user has selected to import
 type TrelloOptions struct {
-	Board *trello.Board
-	List  *trello.List
-	User  *trello.Member
+	Board         *trello.Board
+	List          *trello.List
+	User          *trello.Member
+	ProcessImages bool
 }
 
 func setupTrelloOptionsFromUser() *TrelloOptions {
 	var t TrelloOptions
 
+	t.promptUserShouldMigrateAttachments()
 	t.getCurrentUser()
 	t.getBoardsAndPromptUser()
 	t.getListsAndPromptUser()
 
 	return &t
+}
+
+func (t *TrelloOptions) promptUserShouldMigrateAttachments() {
+	opts := []string{"Yes", "No"}
+
+	fmt.Println("Would you like to migrate all attachments from trello cards?")
+	fmt.Println("This will entail downloading the attachments and uploading to dropbox")
+	fmt.Println("A dropbox account will be required for the token")
+
+	for i, b := range opts {
+		fmt.Printf("[%d] %s\n", i, b)
+	}
+
+	i := promptUserSelectResource()
+	if i >= len(opts) {
+		log.Fatal(errOutOfRange)
+	}
+
+	if i == 0 {
+		t.ProcessImages = true
+		if dropboxToken == "" {
+			log.Fatal("Dropbox token not supplied unable to continue")
+		}
+	}
 }
 
 func (t *TrelloOptions) getCurrentUser() {
