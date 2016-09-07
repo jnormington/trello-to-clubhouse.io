@@ -11,18 +11,40 @@ var outputFormat = "%-40s %-17s %s\n"
 
 func ImportCardsIntoClubhouse(cards *[]Card, opts *ClubhouseOptions) {
 	fmt.Println("Importing trello cards into Clubhouse...")
-	fmt.Printf(outputFormat+"\n", "Trello Card Link", "Import Status", "Error")
+	fmt.Printf(outputFormat+"\n", "Trello Card Link", "Import Status", "Error/Story ID")
 
 	for _, c := range *cards {
 		//We could use bulk update but lets give the user some prompt feedback
-		_, err := opts.ClubhouseEntry.CreateStory(*buildClubhouseStory(&c, opts))
+		st, err := opts.ClubhouseEntry.CreateStory(*buildClubhouseStory(&c, opts))
 		if err != nil {
 			fmt.Printf(outputFormat, c.ShortURL, "Failed", err)
 			continue
 		}
 
-		fmt.Printf(outputFormat, c.ShortURL, "Success", "Boom None...")
+		fmt.Printf(outputFormat, c.ShortURL, "Success", fmt.Sprintf("Story ID: %d", st.ID))
 	}
+}
+
+func buildLinkFiles(card *Card, opts *ClubhouseOptions) []int64 {
+	var ids []int64
+
+	for k, v := range card.Attachments {
+		lf := ch.CreateLinkedFile{
+			Name:       k,
+			Type:       "url",
+			URL:        v,
+			UploaderID: opts.ImportUser.ID,
+		}
+
+		r, err := opts.ClubhouseEntry.CreateLinkedFiles(lf)
+		if err != nil {
+			fmt.Println("Fail to create linked file card name:", card.Name, "Dropbox link:", v, "Err:", err)
+		} else {
+			ids = append(ids, r.ID)
+		}
+	}
+
+	return ids
 }
 
 func buildClubhouseStory(card *Card, opts *ClubhouseOptions) *ch.CreateStory {
@@ -41,6 +63,8 @@ func buildClubhouseStory(card *Card, opts *ClubhouseOptions) *ch.CreateStory {
 		Labels:   *buildLabels(card),
 		Tasks:    *buildTasks(card),
 		Comments: *buildComments(card, opts.AddCommentWithTrelloLink),
+
+		LinkedFileIds: buildLinkFiles(card, opts),
 	}
 }
 

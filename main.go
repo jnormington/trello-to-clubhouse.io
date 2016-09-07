@@ -22,7 +22,7 @@ func main() {
 
 	c := to.getCards()
 
-	cards := ProcessCardsForExporting(&c)
+	cards := ProcessCardsForExporting(&c, to)
 	ExportCardsToFile(cards)
 
 	co := setupClubhouseOptions()
