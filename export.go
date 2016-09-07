@@ -3,28 +3,33 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"log"
+	"net/http"
 	"os/user"
 	"path"
+	"strings"
 	"time"
 
 	trello "github.com/jnormington/go-trello"
+	dropbox "github.com/tj/go-dropbox"
 )
 
 var dateLayout = "2006-01-02T15:04:05.000Z"
 
 type Card struct {
-	Name      string     `json:"name"`
-	Desc      string     `json:"desc"`
-	Labels    []string   `json:"labels"`
-	DueDate   *time.Time `json:"due_date"`
-	Creator   string     `json:"card_creator"`
-	CreatedAt *time.Time `json:"created_at"`
-	Comments  []Comment  `json:"comments"`
-	Tasks     []Task     `json:"checklists"`
-	Position  float32    `json:"position"` //So we can process the cards in order from trello list
-	ShortURL  string     `json:"url"`
+	Name        string            `json:"name"`
+	Desc        string            `json:"desc"`
+	Labels      []string          `json:"labels"`
+	DueDate     *time.Time        `json:"due_date"`
+	Creator     string            `json:"card_creator"`
+	CreatedAt   *time.Time        `json:"created_at"`
+	Comments    []Comment         `json:"comments"`
+	Tasks       []Task            `json:"checklists"`
+	Position    float32           `json:"position"` //So we can process the cards in order from trello list
+	ShortURL    string            `json:"url"`
+	Attachments map[string]string `json:"attachments"`
 }
 
 type Task struct {
@@ -38,7 +43,7 @@ type Comment struct {
 	CreatedAt *time.Time
 }
 
-func ProcessCardsForExporting(crds *[]trello.Card) *[]Card {
+func ProcessCardsForExporting(crds *[]trello.Card, opts *TrelloOptions) *[]Card {
 	var cards []Card
 
 	for _, card := range *crds {
@@ -52,6 +57,10 @@ func ProcessCardsForExporting(crds *[]trello.Card) *[]Card {
 		c.Tasks = getCheckListsForCard(&card)
 		c.Position = card.Pos
 		c.ShortURL = card.ShortUrl
+
+		if opts.ProcessImages {
+			c.Attachments = downloadCardAttachmentsUploadToDropbox(&card)
+		}
 
 		cards = append(cards, c)
 	}
@@ -147,4 +156,55 @@ func parseDateOrReturnNil(strDate string) *time.Time {
 	}
 
 	return &d
+}
+
+func downloadCardAttachmentsUploadToDropbox(card *trello.Card) map[string]string {
+	sharedLinks := map[string]string{}
+	d := dropbox.New(dropbox.NewConfig(dropboxToken))
+
+	attachments, err := card.Attachments()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	for i, f := range attachments {
+		name := strings.Replace(f.Name, " ", "", 10)
+		path := fmt.Sprintf("/%s/%s/%d%s%s", card.IdList, card.Id, i, "_", name)
+
+		io := downloadTrelloAttachment(&f)
+		_, err := d.Files.Upload(&dropbox.UploadInput{
+			Path:   path,
+			Mode:   dropbox.WriteModeAdd,
+			Reader: io,
+			Mute:   true,
+		})
+
+		io.Close()
+
+		if err != nil {
+			fmt.Printf("Error occurred uploading file to dropbox continuing... %s\n", err)
+		} else {
+			// Must be success created a shared url
+			s := dropbox.CreateSharedLinkInput{path, false}
+			out, err := d.Sharing.CreateSharedLink(&s)
+			if err != nil {
+				fmt.Printf("Error occurred sharing file on dropbox continuing... %s\n", err)
+			} else {
+				sharedLinks[name] = out.URL
+			}
+		}
+	}
+
+	return sharedLinks
+}
+
+func downloadTrelloAttachment(attachment *trello.Attachment) io.ReadCloser {
+	resp, err := http.Get(attachment.Url)
+	//	defer resp.Body.Close()
+
+	if err != nil {
+		log.Fatalf("Error in download Trello attachment %s\n", err)
+	}
+
+	return resp.Body
 }

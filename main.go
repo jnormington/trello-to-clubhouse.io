@@ -11,6 +11,7 @@ var (
 	clubHouseToken = os.Getenv("CLUBHOUSE_TOKEN")
 	trelloToken    = os.Getenv("TRELLO_TOKEN")
 	trelloKey      = os.Getenv("TRELLO_KEY")
+	dropboxToken   = os.Getenv("DROPBOX_TOKEN")
 
 	stdinReader   = bufio.NewReader(os.Stdin)
 	errOutOfRange = "Number input is out of range. Try again"
@@ -21,7 +22,7 @@ func main() {
 
 	c := to.getCards()
 
-	cards := ProcessCardsForExporting(&c)
+	cards := ProcessCardsForExporting(&c, to)
 	ExportCardsToFile(cards)
 
 	co := setupClubhouseOptions()
