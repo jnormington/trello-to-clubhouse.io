@@ -156,7 +156,7 @@ func downloadCardAttachmentsUploadToDropbox(card *trello.Card) map[string]string
 
 	for i, f := range attachments {
 		name := strings.Replace(f.Name, " ", "", 10)
-		path := fmt.Sprintf("/%s/%s/%d%s%s", card.IdList, card.Id, i, "_", name)
+		path := fmt.Sprintf("/trello/%s/%s/%d%s%s", card.IdList, card.Id, i, "_", name)
 
 		io := downloadTrelloAttachment(&f)
 		_, err := d.Files.Upload(&dropbox.UploadInput{
