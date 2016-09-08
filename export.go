@@ -1,14 +1,10 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"log"
 	"net/http"
-	"os/user"
-	"path"
 	"strings"
 	"time"
 
@@ -131,21 +127,6 @@ func getLabelsFlattenFromCard(card *trello.Card) []string {
 	}
 
 	return labels
-}
-
-func ExportCardsToFile(cards *[]Card) {
-	b, err := json.Marshal(cards)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	u, err := user.Current()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	filePath := path.Join(u.HomeDir, "cards.json")
-	ioutil.WriteFile(filePath, b, 0644)
 }
 
 func parseDateOrReturnNil(strDate string) *time.Time {

@@ -23,7 +23,6 @@ func main() {
 	c := to.getCards()
 
 	cards := ProcessCardsForExporting(&c, to)
-	ExportCardsToFile(cards)
 
 	co := setupClubhouseOptions()
 	confirmAllOptionsBeforeImport(to, co)
