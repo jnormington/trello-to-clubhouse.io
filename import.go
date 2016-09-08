@@ -9,6 +9,8 @@ import (
 
 var outputFormat = "%-40s %-17s %s\n"
 
+// ImportCardsIntoClubhouse takes *[]Card, *ClubhouseOptions and builds a clubhouse Story
+// this story from both the card and clubhouse options and creates via the api.
 func ImportCardsIntoClubhouse(cards *[]Card, opts *ClubhouseOptions) {
 	fmt.Println("Importing trello cards into Clubhouse...")
 	fmt.Printf(outputFormat+"\n", "Trello Card Link", "Import Status", "Error/Story ID")

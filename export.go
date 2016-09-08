@@ -14,6 +14,7 @@ import (
 
 var dateLayout = "2006-01-02T15:04:05.000Z"
 
+// Card holds all the attributes needed for migrating a complete card from Trello to Clubhouse
 type Card struct {
 	Name        string            `json:"name"`
 	Desc        string            `json:"desc"`
@@ -23,22 +24,27 @@ type Card struct {
 	CreatedAt   *time.Time        `json:"created_at"`
 	Comments    []Comment         `json:"comments"`
 	Tasks       []Task            `json:"checklists"`
-	Position    float32           `json:"position"` //So we can process the cards in order from trello list
+	Position    float32           `json:"position"`
 	ShortURL    string            `json:"url"`
 	Attachments map[string]string `json:"attachments"`
 }
 
+// Task builds a basic object based off trello.Task
 type Task struct {
 	Completed   bool   `json:"completed"`
 	Description string `json:"description"`
 }
 
+// Comment builds a basic object based off trello.Comment
 type Comment struct {
 	Text      string
 	Creator   string
 	CreatedAt *time.Time
 }
 
+// ProcessCardsForExporting takes *[]trello.Card, *TrelloOptions and builds up a Card
+// which consists of calling other functions to make the api calls to Trello
+// for the relevant attributes of a card returns *[]Card
 func ProcessCardsForExporting(crds *[]trello.Card, opts *TrelloOptions) *[]Card {
 	var cards []Card
 

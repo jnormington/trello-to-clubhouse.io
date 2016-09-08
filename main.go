@@ -15,16 +15,17 @@ var (
 
 	stdinReader   = bufio.NewReader(os.Stdin)
 	errOutOfRange = "Number input is out of range. Try again"
+	yesNoOpts     = []string{"Yes", "No"}
 )
 
 func main() {
-	to := setupTrelloOptionsFromUser()
+	to := SetupTrelloOptionsFromUser()
 
 	c := to.getCards()
 
 	cards := ProcessCardsForExporting(&c, to)
 
-	co := setupClubhouseOptions()
+	co := SetupClubhouseOptions()
 	confirmAllOptionsBeforeImport(to, co)
 
 	ImportCardsIntoClubhouse(cards, co)
@@ -32,8 +33,6 @@ func main() {
 }
 
 func confirmAllOptionsBeforeImport(to *TrelloOptions, co *ClubhouseOptions) {
-	opts := []string{"Yes", "No"}
-
 	fmt.Println("****** WARNING ******")
 	fmt.Println("Please review carefully before you continue")
 	fmt.Printf("\nExport cards from Trello\n\tBoard: %s\n\tList: %s\n\n\n", to.Board.Name, to.List.Name)
@@ -42,7 +41,7 @@ func confirmAllOptionsBeforeImport(to *TrelloOptions, co *ClubhouseOptions) {
 
 	fmt.Println("Is the above correct select the number representing your answer ?")
 
-	for i, o := range opts {
+	for i, o := range yesNoOpts {
 		fmt.Printf("[%d] %s\n", i, o)
 	}
 

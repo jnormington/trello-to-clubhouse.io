@@ -7,6 +7,7 @@ import (
 	ch "github.com/jnormington/clubhouse-go"
 )
 
+//ClubhouseOptions stores the options selected by the user
 type ClubhouseOptions struct {
 	Project                  *ch.Project
 	State                    *ch.State
@@ -16,7 +17,9 @@ type ClubhouseOptions struct {
 	ImportUser               *ch.User
 }
 
-func setupClubhouseOptions() *ClubhouseOptions {
+// SetupClubhouseOptions calls all the functions which consist of questions
+// for building ClubhouseOptions and returns a pointer to ClubhouseOptions instance
+func SetupClubhouseOptions() *ClubhouseOptions {
 	var co ClubhouseOptions
 
 	co.ClubhouseEntry = ch.New(clubHouseToken)
@@ -31,15 +34,13 @@ func setupClubhouseOptions() *ClubhouseOptions {
 }
 
 func (co *ClubhouseOptions) promptUserIfAddCommentWithTrelloLink() {
-	opts := []string{"Yes", "No"}
-
 	fmt.Println("Would you like a comment added with the original trello ticket link?")
-	for i, b := range opts {
+	for i, b := range yesNoOpts {
 		fmt.Printf("[%d] %s\n", i, b)
 	}
 
 	i := promptUserSelectResource()
-	if i >= len(opts) {
+	if i >= len(yesNoOpts) {
 		log.Fatal(errOutOfRange)
 	}
 

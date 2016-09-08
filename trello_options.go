@@ -9,8 +9,7 @@ import (
 	trello "github.com/jnormington/go-trello"
 )
 
-// TrelloOptions holds the links to the board and list
-// from the trello api calls that the user has selected to import
+// TrelloOptions stores options that the user has selected
 type TrelloOptions struct {
 	Board         *trello.Board
 	List          *trello.List
@@ -18,7 +17,9 @@ type TrelloOptions struct {
 	ProcessImages bool
 }
 
-func setupTrelloOptionsFromUser() *TrelloOptions {
+// SetupTrelloOptionsFromUser calls all the functions which consist of questions
+// for building TrelloOptions and returns a pointer to TrelloOptions instance
+func SetupTrelloOptionsFromUser() *TrelloOptions {
 	var t TrelloOptions
 
 	t.promptUserShouldMigrateAttachments()
@@ -30,18 +31,16 @@ func setupTrelloOptionsFromUser() *TrelloOptions {
 }
 
 func (t *TrelloOptions) promptUserShouldMigrateAttachments() {
-	opts := []string{"Yes", "No"}
-
 	fmt.Println("Would you like to migrate all attachments from trello cards?")
 	fmt.Println("This will entail downloading the attachments and uploading to dropbox")
 	fmt.Println("A dropbox account will be required for the token")
 
-	for i, b := range opts {
+	for i, b := range yesNoOpts {
 		fmt.Printf("[%d] %s\n", i, b)
 	}
 
 	i := promptUserSelectResource()
-	if i >= len(opts) {
+	if i >= len(yesNoOpts) {
 		log.Fatal(errOutOfRange)
 	}
 
@@ -125,7 +124,7 @@ func promptUserSelectResource() int {
 	i = strings.TrimRight(i, "\n")
 	id, err := strconv.Atoi(i)
 	if err != nil {
-		log.Fatal("Hmm... did you type a number from the list ?", err)
+		log.Fatal("Hmm... did you type a number from the list ?")
 	}
 
 	return id
