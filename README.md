@@ -27,6 +27,8 @@ feel free to create an issue or submit a pull request.
 I know what you are thinking, why, why not just use the current Trello url for the attachment ? Well the attachments are on the Trello S3 bucket meaning that once the card is deleted so are the images. Even if you don't delete the card maybe
 Trello might see some traffic from Clubhouse and ban it so for safety we just download and upload to dropbox and share the resource.
 
+All the attachments are uploaded under trello
+
 I understand its not perfect and maybe using the direct link is your preferred route if this is the case please fork and modify.
 
 ## Setup
@@ -56,10 +58,10 @@ Now you have all your tokens you need to set them up as environment variables.
 
 Download the binary for your platform from the list below
 
-- [Windows (x86)](https://github.com/geckoboard/trello-to-clubhouse.io/releases/download/v0.1.0/trello_to_clubhouse_windows_x86.exe)
-- [Windows (x64)](https://github.com/geckoboard/trello-to-clubhouse.io/releases/download/v0.1.0/trello_to_clubhouse_windows_x64.exe)
-- [Linux (x64)](https://github.com/geckoboard/trello-to-clubhouse.io/releases/download/v0.1.0/trello_to_clubhouse_linux_x64)
-- [OSX (x64)](https://github.com/geckoboard/trello-to-clubhouse.io/releases/download/v0.1.0/trello_to_clubhouse_osx_x64)
+- [Windows (x86)](https://github.com/jnormington/trello-to-clubhouse.io/releases/download/v0.1.0/trello_to_clubhouse_windows_x86.exe)
+- [Windows (x64)](https://github.com/jnormington/trello-to-clubhouse.io/releases/download/v0.1.0/trello_to_clubhouse_windows_x64.exe)
+- [Linux (x64)](https://github.com/jnormington/trello-to-clubhouse.io/releases/download/v0.1.0/trello_to_clubhouse_linux_x64)
+- [OSX (x64)](https://github.com/jnormington/trello-to-clubhouse.io/releases/download/v0.1.0/trello_to_clubhouse_osx_x64)
 
 
 Then move to the next section for settings the environment variables for your platform
