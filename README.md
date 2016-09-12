@@ -1,10 +1,10 @@
 # trello-to-clubhouse.io
 
 ## What is it ?
-This is a script written with Go which migrates the cards from a specific list on a board in Trello and into 
+This is a script written with Go which migrates the cards from a specific list on a board in Trello and into
 [Clubhouse.io](https://clubhouse.io).
 
-This program takes an interactive approach by asking questions and querying the api for the things we need 
+This program takes an interactive approach by asking questions and querying the api for the things we need
 and takes action from there instead of you trying hard to find whats needs and it taking too long.
 
 It currently migrates the following from a Trello Card what we felt was valuable;
@@ -58,10 +58,10 @@ Now you have all your tokens you need to set them up as environment variables.
 
 Download the binary for your platform from the list below
 
-- [Windows (x86)](https://github.com/jnormington/trello-to-clubhouse.io/releases/download/v0.1.0/trello_to_clubhouse_windows_x86.exe)
-- [Windows (x64)](https://github.com/jnormington/trello-to-clubhouse.io/releases/download/v0.1.0/trello_to_clubhouse_windows_x64.exe)
-- [Linux (x64)](https://github.com/jnormington/trello-to-clubhouse.io/releases/download/v0.1.0/trello_to_clubhouse_linux_x64)
-- [OSX (x64)](https://github.com/jnormington/trello-to-clubhouse.io/releases/download/v0.1.0/trello_to_clubhouse_osx_x64)
+- [Windows (x86)](https://github.com/jnormington/trello-to-clubhouse.io/releases/download/v0.1.1/trello_to_clubhouse_windows_x86.exe)
+- [Windows (x64)](https://github.com/jnormington/trello-to-clubhouse.io/releases/download/v0.1.1/trello_to_clubhouse_windows_x64.exe)
+- [Linux (x64)](https://github.com/jnormington/trello-to-clubhouse.io/releases/download/v0.1.1/trello_to_clubhouse_linux_x64)
+- [OSX (x64)](https://github.com/jnormington/trello-to-clubhouse.io/releases/download/v0.1.1/trello_to_clubhouse_osx_x64)
 
 
 Then move to the next section for settings the environment variables for your platform
@@ -78,7 +78,7 @@ set DROPBOX_TOKEN=YOURTOKEN
 ```
 
 Now with the same command window open drag the downloaded binary into it and press return key. You
-should now be asked several questions and before long cards will be in clubhouse.io. 
+should now be asked several questions and before long cards will be in clubhouse.io.
 
 You can see an example below if similar output and the questions you will be asked along the journey.
 
@@ -94,7 +94,7 @@ export DROPBOX_TOKEN=YOURTOKEN
 ```
 
 Now with the same terminal window open drag the downloaded binary into it and press return key. You
-should now be asked several questions and before long the cards will be in clubhouse.io. 
+should now be asked several questions and before long the cards will be in clubhouse.io.
 
 You can see an example below if similar output and the questions you will be asked along the journey.
 
