@@ -41,7 +41,7 @@ Before we can run the program we need to get all the keys and tokens from the se
 To get your token use the following url, but remember to replace the key at the key
 
 ```
-https://trello.com/1/authorize?expiration=1day&name=MigrationFromTrelloToClubhouse&key=REPLACEWITHYOURKEY
+https://trello.com/1/authorize?expiration=1day&name=MigrationFromTrelloToClubhouse&response_type=token&key=REPLACEWITHYOURKEY
 ```
 
 #### Clubhouse (Token)
