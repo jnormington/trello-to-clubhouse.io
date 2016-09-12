@@ -93,7 +93,10 @@ export TRELLO_TOKEN=YOURTOKEN
 export DROPBOX_TOKEN=YOURTOKEN
 ```
 
-Now with the same terminal window open drag the downloaded binary into it and press return key. You
+Now you might need to make the binary executable to do so type the following `chmod +x ` and then drag
+the downloaded binary press return key. This should now be executable by any user.
+
+With the same terminal window open drag the downloaded binary into it and press return key. You
 should now be asked several questions and before long the cards will be in clubhouse.io.
 
 You can see an example below if similar output and the questions you will be asked along the journey.
