@@ -5,7 +5,7 @@ import (
 	"io"
 	"log"
 	"net/http"
-	"strings"
+	"regexp"
 	"time"
 
 	trello "github.com/jnormington/go-trello"
@@ -13,6 +13,7 @@ import (
 )
 
 var dateLayout = "2006-01-02T15:04:05.000Z"
+var safeFileNameRegexp = regexp.MustCompile(`[^a-zA-Z0-9_.]+`)
 
 // Card holds all the attributes needed for migrating a complete card from Trello to Clubhouse
 type Card struct {
@@ -155,7 +156,7 @@ func downloadCardAttachmentsUploadToDropbox(card *trello.Card) map[string]string
 	}
 
 	for i, f := range attachments {
-		name := strings.Replace(f.Name, " ", "", 10)
+		name := safeFileNameRegexp.ReplaceAllString(f.Name, "_")
 		path := fmt.Sprintf("/trello/%s/%s/%d%s%s", card.IdList, card.Id, i, "_", name)
 
 		io := downloadTrelloAttachment(&f)
