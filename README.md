@@ -58,10 +58,10 @@ Now you have all your tokens you need to set them up as environment variables.
 
 Download the binary for your platform from the list below
 
-- [Windows (x86)](https://github.com/jnormington/trello-to-clubhouse.io/releases/download/v0.1.1/trello_to_clubhouse_windows_x86.exe)
-- [Windows (x64)](https://github.com/jnormington/trello-to-clubhouse.io/releases/download/v0.1.1/trello_to_clubhouse_windows_x64.exe)
-- [Linux (x64)](https://github.com/jnormington/trello-to-clubhouse.io/releases/download/v0.1.1/trello_to_clubhouse_linux_x64)
-- [OSX (x64)](https://github.com/jnormington/trello-to-clubhouse.io/releases/download/v0.1.1/trello_to_clubhouse_osx_x64)
+- [Windows (x86)](https://github.com/jnormington/trello-to-clubhouse.io/releases/download/v0.1.2/trello_to_clubhouse_windows_x86.exe)
+- [Windows (x64)](https://github.com/jnormington/trello-to-clubhouse.io/releases/download/v0.1.2/trello_to_clubhouse_windows_x64.exe)
+- [Linux (x64)](https://github.com/jnormington/trello-to-clubhouse.io/releases/download/v0.1.2/trello_to_clubhouse_linux_x64)
+- [OSX (x64)](https://github.com/jnormington/trello-to-clubhouse.io/releases/download/v0.1.2/trello_to_clubhouse_osx_x64)
 
 
 Then move to the next section for settings the environment variables for your platform
