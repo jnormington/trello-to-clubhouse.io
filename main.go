@@ -26,10 +26,53 @@ func main() {
 	cards := ProcessCardsForExporting(&c, to)
 
 	co := SetupClubhouseOptions()
+
+	mapTrelloToClubhouseUsers(to, co)
 	confirmAllOptionsBeforeImport(to, co)
 
 	ImportCardsIntoClubhouse(cards, co)
 	fmt.Println("*** Looks like we finished go and have fun & joy with Clubhouse ***")
+}
+
+func mapTrelloToClubhouseUsers(to *TrelloOptions, co *ClubhouseOptions) {
+	tMembers, err := to.Board.Members()
+	co.UserMapping = make(map[string]string)
+	missing := false
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	cUsers := co.ListUsers()
+
+	for _, m := range tMembers {
+		match := false
+
+		for _, u := range cUsers {
+			// Email address interestingly sits within the permission
+			// Validate that we have at least one permission entry
+			if len(u.Permissions) == 0 {
+				continue
+			}
+
+			if m.Email == u.Permissions[0].EmailAddress {
+				match = true
+				co.UserMapping[m.Id] = u.ID
+			}
+		}
+
+		if !match {
+			fmt.Printf("User %s not found in clubhouse\n", m.Email)
+			missing = true
+		}
+	}
+
+	// Now check if any are missing and prompt to default them to one user
+	if missing {
+		fmt.Printf("The above account are missing.\n")
+		fmt.Printf("Please select an account to default ticket creators of these missing accounts")
+		co.GetBackupUserForImport(cUsers)
+	}
 }
 
 func confirmAllOptionsBeforeImport(to *TrelloOptions, co *ClubhouseOptions) {
