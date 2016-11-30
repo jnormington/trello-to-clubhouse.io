@@ -40,6 +40,7 @@ func SetupClubhouseOptions() *ClubhouseOptions {
 	co.getProjectsAndPromptUser()
 	co.getWorkflowStatesAndPromptUser()
 	co.promptUserForStoryType()
+	co.getBackupUserForImport()
 	co.promptUserIfAddCommentWithTrelloLink()
 
 	return &co
@@ -80,7 +81,15 @@ func (co *ClubhouseOptions) getProjectsAndPromptUser() {
 	co.Project = &projects[i]
 }
 
-func (co *ClubhouseOptions) GetBackupUserForImport(users []ch.User) {
+func (co *ClubhouseOptions) getBackupUserForImport() {
+	users, err := co.ClubhouseEntry.ListUsers()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Printf("Please select a backup account to set as creator")
+	fmt.Printf("This will only be used if the original account isn't in Clubhouse")
+
 	for i, u := range users {
 		fmt.Printf("[%d] %s\n", i, u.Name)
 	}

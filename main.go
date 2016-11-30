@@ -66,13 +66,6 @@ func mapTrelloToClubhouseUsers(to *TrelloOptions, co *ClubhouseOptions) {
 			missing = true
 		}
 	}
-
-	// Now check if any are missing and prompt to default them to one user
-	if missing {
-		fmt.Printf("The above account are missing.\n")
-		fmt.Printf("Please select an account to default ticket creators of these missing accounts")
-		co.GetBackupUserForImport(cUsers)
-	}
 }
 
 func confirmAllOptionsBeforeImport(to *TrelloOptions, co *ClubhouseOptions) {
