@@ -72,7 +72,7 @@ func buildClubhouseStory(card *Card, opts *ClubhouseOptions) *ch.CreateStory {
 }
 
 func mapOriginalCardCreator(card *Card, opts *ClubhouseOptions) string {
-	id := opts.UserMapping[card.IdCreator]
+	id := opts.UserMapping[card.IDCreator]
 
 	if id == "" {
 		// Return the backup import user
@@ -85,7 +85,7 @@ func mapOriginalCardCreator(card *Card, opts *ClubhouseOptions) string {
 func mapCardOwnersToStory(card *Card, opts *ClubhouseOptions) []string {
 	var owners []string
 
-	for _, m := range card.IdMembers {
+	for _, m := range card.IDMembers {
 		id := opts.UserMapping[m]
 
 		if id == "" {

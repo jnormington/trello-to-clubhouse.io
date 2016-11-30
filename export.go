@@ -21,14 +21,14 @@ type Card struct {
 	Desc        string            `json:"desc"`
 	Labels      []string          `json:"labels"`
 	DueDate     *time.Time        `json:"due_date"`
-	IdCreator   string            `json:"id_creator"`
+	IDCreator   string            `json:"id_creator"`
 	CreatedAt   *time.Time        `json:"created_at"`
 	Comments    []Comment         `json:"comments"`
 	Tasks       []Task            `json:"checklists"`
 	Position    float32           `json:"position"`
 	ShortURL    string            `json:"url"`
 	Attachments map[string]string `json:"attachments"`
-	IdMembers   []string          `json:"id_members"`
+	IDMembers   []string          `json:"id_members"`
 }
 
 // Task builds a basic object based off trello.Task
@@ -57,8 +57,8 @@ func ProcessCardsForExporting(crds *[]trello.Card, opts *TrelloOptions) *[]Card 
 		c.Desc = card.Desc
 		c.Labels = getLabelsFlattenFromCard(&card)
 		c.DueDate = parseDateOrReturnNil(card.Due)
-		c.Creator, c.CreatedAt, c.Comments = getCommentsAndCardCreator(&card)
-		c.IdMembers = card.IdMembers
+		c.IDCreator, c.CreatedAt, c.Comments = getCommentsAndCardCreator(&card)
+		c.IDMembers = card.IdMembers
 		c.Tasks = getCheckListsForCard(&card)
 		c.Position = card.Pos
 		c.ShortURL = card.ShortUrl

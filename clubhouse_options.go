@@ -87,8 +87,8 @@ func (co *ClubhouseOptions) getBackupUserForImport() {
 		log.Fatal(err)
 	}
 
-	fmt.Printf("Please select a backup account to set as creator")
-	fmt.Printf("This will only be used if the original account isn't in Clubhouse")
+	fmt.Println("Please select a backup account to set as creator")
+	fmt.Println("This will only be used if the original account isn't in Clubhouse")
 
 	for i, u := range users {
 		fmt.Printf("[%d] %s\n", i, u.Name)

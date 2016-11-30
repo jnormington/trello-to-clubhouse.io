@@ -37,7 +37,6 @@ func main() {
 func mapTrelloToClubhouseUsers(to *TrelloOptions, co *ClubhouseOptions) {
 	tMembers, err := to.Board.Members()
 	co.UserMapping = make(map[string]string)
-	missing := false
 
 	if err != nil {
 		log.Fatal(err)
@@ -63,7 +62,6 @@ func mapTrelloToClubhouseUsers(to *TrelloOptions, co *ClubhouseOptions) {
 
 		if !match {
 			fmt.Printf("User %s not found in clubhouse\n", m.Email)
-			missing = true
 		}
 	}
 }
