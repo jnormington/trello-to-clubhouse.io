@@ -54,7 +54,7 @@ func buildClubhouseStory(card *Card, opts *ClubhouseOptions) *ch.CreateStory {
 	return &ch.CreateStory{
 		ProjectID:       opts.Project.ID,
 		WorkflowStateID: opts.State.ID,
-		RequestedByID:   opts.ImportUser.ID,
+		RequestedByID:   mapOriginalCardCreator(card, opts),
 		StoryType:       opts.StoryType,
 
 		Name:        card.Name,
@@ -69,6 +69,17 @@ func buildClubhouseStory(card *Card, opts *ClubhouseOptions) *ch.CreateStory {
 
 		LinkedFileIds: buildLinkFiles(card, opts),
 	}
+}
+
+func mapOriginalCardCreator(card *Card, opts *ClubhouseOptions) string {
+	id := opts.UserMapping[card.IdCreator]
+
+	if id == "" {
+		// Return the backup import user
+		return opts.ImportUser.ID
+	}
+
+	return id
 }
 
 func mapCardOwnersToStory(card *Card, opts *ClubhouseOptions) []string {

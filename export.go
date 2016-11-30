@@ -21,7 +21,7 @@ type Card struct {
 	Desc        string            `json:"desc"`
 	Labels      []string          `json:"labels"`
 	DueDate     *time.Time        `json:"due_date"`
-	Creator     string            `json:"card_creator"`
+	IdCreator   string            `json:"id_creator"`
 	CreatedAt   *time.Time        `json:"created_at"`
 	Comments    []Comment         `json:"comments"`
 	Tasks       []Task            `json:"checklists"`
@@ -87,7 +87,7 @@ func getCommentsAndCardCreator(card *trello.Card) (string, *time.Time, []Comment
 		if a.Type == "commentCard" && a.Data.Text != "" {
 			c := Comment{
 				Text:      a.Data.Text,
-				Creator:   a.MemberCreator.FullName,
+				Creator:   a.IdMemberCreator,
 				CreatedAt: parseDateOrReturnNil(a.Date),
 			}
 			comments = append(comments, c)
