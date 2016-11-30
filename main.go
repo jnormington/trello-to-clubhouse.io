@@ -26,10 +26,44 @@ func main() {
 	cards := ProcessCardsForExporting(&c, to)
 
 	co := SetupClubhouseOptions()
+
+	mapTrelloToClubhouseUsers(to, co)
 	confirmAllOptionsBeforeImport(to, co)
 
 	ImportCardsIntoClubhouse(cards, co)
 	fmt.Println("*** Looks like we finished go and have fun & joy with Clubhouse ***")
+}
+
+func mapTrelloToClubhouseUsers(to *TrelloOptions, co *ClubhouseOptions) {
+	tMembers, err := to.Board.Members()
+	co.UserMapping = make(map[string]string)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	cUsers := co.ListUsers()
+
+	for _, m := range tMembers {
+		match := false
+
+		for _, u := range cUsers {
+			// Email address interestingly sits within the permission
+			// Validate that we have at least one permission entry
+			if len(u.Permissions) == 0 {
+				continue
+			}
+
+			if m.Email == u.Permissions[0].EmailAddress {
+				match = true
+				co.UserMapping[m.Id] = u.ID
+			}
+		}
+
+		if !match {
+			fmt.Printf("User %s not found in clubhouse\n", m.Email)
+		}
+	}
 }
 
 func confirmAllOptionsBeforeImport(to *TrelloOptions, co *ClubhouseOptions) {

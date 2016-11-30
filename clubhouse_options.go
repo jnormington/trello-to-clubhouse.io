@@ -15,6 +15,19 @@ type ClubhouseOptions struct {
 	StoryType                string
 	AddCommentWithTrelloLink bool
 	ImportUser               *ch.User
+	UserMapping              map[string]string
+}
+
+// ListUsers makes the call to Clubhouse package for the list
+// of users. And fails hard if an err occurs.
+func (co *ClubhouseOptions) ListUsers() []ch.User {
+	u, err := co.ClubhouseEntry.ListUsers()
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return u
 }
 
 // SetupClubhouseOptions calls all the functions which consist of questions
@@ -26,8 +39,8 @@ func SetupClubhouseOptions() *ClubhouseOptions {
 
 	co.getProjectsAndPromptUser()
 	co.getWorkflowStatesAndPromptUser()
-	co.getUsersAndPromptUser()
 	co.promptUserForStoryType()
+	co.getBackupUserForImport()
 	co.promptUserIfAddCommentWithTrelloLink()
 
 	return &co
@@ -68,13 +81,15 @@ func (co *ClubhouseOptions) getProjectsAndPromptUser() {
 	co.Project = &projects[i]
 }
 
-func (co *ClubhouseOptions) getUsersAndPromptUser() {
+func (co *ClubhouseOptions) getBackupUserForImport() {
 	users, err := co.ClubhouseEntry.ListUsers()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	fmt.Println("Please select the user account to import the cards as")
+	fmt.Println("Please select a backup account to set as creator")
+	fmt.Println("This will only be used if the original account isn't in Clubhouse")
+
 	for i, u := range users {
 		fmt.Printf("[%d] %s\n", i, u.Name)
 	}

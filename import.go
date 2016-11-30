@@ -54,7 +54,7 @@ func buildClubhouseStory(card *Card, opts *ClubhouseOptions) *ch.CreateStory {
 	return &ch.CreateStory{
 		ProjectID:       opts.Project.ID,
 		WorkflowStateID: opts.State.ID,
-		RequestedByID:   opts.ImportUser.ID,
+		RequestedByID:   mapOriginalCardCreator(card, opts),
 		StoryType:       opts.StoryType,
 
 		Name:        card.Name,
@@ -65,9 +65,38 @@ func buildClubhouseStory(card *Card, opts *ClubhouseOptions) *ch.CreateStory {
 		Labels:   *buildLabels(card),
 		Tasks:    *buildTasks(card),
 		Comments: *buildComments(card, opts.AddCommentWithTrelloLink),
+		OwnerIds: mapCardOwnersToStory(card, opts),
 
 		LinkedFileIds: buildLinkFiles(card, opts),
 	}
+}
+
+func mapOriginalCardCreator(card *Card, opts *ClubhouseOptions) string {
+	id := opts.UserMapping[card.IDCreator]
+
+	if id == "" {
+		// Return the backup import user
+		return opts.ImportUser.ID
+	}
+
+	return id
+}
+
+func mapCardOwnersToStory(card *Card, opts *ClubhouseOptions) []string {
+	var owners []string
+
+	for _, m := range card.IDMembers {
+		id := opts.UserMapping[m]
+
+		if id == "" {
+			// If the assignee is not found ignore it
+			continue
+		}
+
+		owners = append(owners, id)
+	}
+
+	return owners
 }
 
 func buildComments(card *Card, addCommentWithTrelloLink bool) *[]ch.CreateComment {
