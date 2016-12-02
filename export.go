@@ -21,7 +21,8 @@ type Card struct {
 	Desc        string            `json:"desc"`
 	Labels      []string          `json:"labels"`
 	DueDate     *time.Time        `json:"due_date"`
-	Creator     string            `json:"card_creator"`
+	IDCreator   string            `json:"id_creator"`
+	IDOwners    []string          `json:"id_owners"`
 	CreatedAt   *time.Time        `json:"created_at"`
 	Comments    []Comment         `json:"comments"`
 	Tasks       []Task            `json:"checklists"`
@@ -38,9 +39,10 @@ type Task struct {
 
 // Comment builds a basic object based off trello.Comment
 type Comment struct {
-	Text      string
-	Creator   string
-	CreatedAt *time.Time
+	Text        string
+	IDCreator   string
+	CreatorName string
+	CreatedAt   *time.Time
 }
 
 // ProcessCardsForExporting takes *[]trello.Card, *TrelloOptions and builds up a Card
@@ -56,10 +58,11 @@ func ProcessCardsForExporting(crds *[]trello.Card, opts *TrelloOptions) *[]Card 
 		c.Desc = card.Desc
 		c.Labels = getLabelsFlattenFromCard(&card)
 		c.DueDate = parseDateOrReturnNil(card.Due)
-		c.Creator, c.CreatedAt, c.Comments = getCommentsAndCardCreator(&card)
+		c.IDCreator, c.CreatedAt, c.Comments = getCommentsAndCardCreator(&card)
 		c.Tasks = getCheckListsForCard(&card)
 		c.Position = card.Pos
 		c.ShortURL = card.ShortUrl
+		c.IDOwners = card.IdMembers
 
 		if opts.ProcessImages {
 			c.Attachments = downloadCardAttachmentsUploadToDropbox(&card)
@@ -84,14 +87,15 @@ func getCommentsAndCardCreator(card *trello.Card) (string, *time.Time, []Comment
 	for _, a := range actions {
 		if a.Type == "commentCard" && a.Data.Text != "" {
 			c := Comment{
-				Text:      a.Data.Text,
-				Creator:   a.MemberCreator.FullName,
-				CreatedAt: parseDateOrReturnNil(a.Date),
+				Text:        a.Data.Text,
+				IDCreator:   a.MemberCreator.Id,
+				CreatorName: a.MemberCreator.FullName,
+				CreatedAt:   parseDateOrReturnNil(a.Date),
 			}
 			comments = append(comments, c)
 
 		} else if a.Type == "createCard" {
-			creator = a.MemberCreator.FullName
+			creator = a.MemberCreator.Id
 			createdAt = parseDateOrReturnNil(a.Date)
 		}
 	}

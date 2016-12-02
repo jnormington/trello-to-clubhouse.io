@@ -11,13 +11,13 @@ var outputFormat = "%-40s %-17s %s\n"
 
 // ImportCardsIntoClubhouse takes *[]Card, *ClubhouseOptions and builds a clubhouse Story
 // this story from both the card and clubhouse options and creates via the api.
-func ImportCardsIntoClubhouse(cards *[]Card, opts *ClubhouseOptions) {
+func ImportCardsIntoClubhouse(cards *[]Card, opts *ClubhouseOptions, um *UserMap) {
 	fmt.Println("Importing trello cards into Clubhouse...")
 	fmt.Printf(outputFormat+"\n", "Trello Card Link", "Import Status", "Error/Story ID")
 
 	for _, c := range *cards {
 		//We could use bulk update but lets give the user some prompt feedback
-		st, err := opts.ClubhouseEntry.CreateStory(*buildClubhouseStory(&c, opts))
+		st, err := opts.ClubhouseEntry.CreateStory(*buildClubhouseStory(&c, opts, um))
 		if err != nil {
 			fmt.Printf(outputFormat, c.ShortURL, "Failed", err)
 			continue
@@ -49,12 +49,13 @@ func buildLinkFiles(card *Card, opts *ClubhouseOptions) []int64 {
 	return ids
 }
 
-func buildClubhouseStory(card *Card, opts *ClubhouseOptions) *ch.CreateStory {
+func buildClubhouseStory(card *Card, opts *ClubhouseOptions, um *UserMap) *ch.CreateStory {
 
 	return &ch.CreateStory{
 		ProjectID:       opts.Project.ID,
 		WorkflowStateID: opts.State.ID,
-		RequestedByID:   opts.ImportUser.ID,
+		RequestedByID:   um.GetCreator(card.IDCreator),
+		OwnerIds:        mapOwnersFromTrelloCard(card, um),
 		StoryType:       opts.StoryType,
 
 		Name:        card.Name,
@@ -64,19 +65,30 @@ func buildClubhouseStory(card *Card, opts *ClubhouseOptions) *ch.CreateStory {
 
 		Labels:   *buildLabels(card),
 		Tasks:    *buildTasks(card),
-		Comments: *buildComments(card, opts.AddCommentWithTrelloLink),
+		Comments: *buildComments(card, opts.AddCommentWithTrelloLink, um),
 
 		LinkedFileIds: buildLinkFiles(card, opts),
 	}
 }
 
-func buildComments(card *Card, addCommentWithTrelloLink bool) *[]ch.CreateComment {
+func mapOwnersFromTrelloCard(c *Card, um *UserMap) []string {
+	var owners []string
+
+	for _, o := range c.IDOwners {
+		owners = append(owners, um.GetCreator(o))
+	}
+
+	return owners
+}
+
+func buildComments(card *Card, addCommentWithTrelloLink bool, um *UserMap) *[]ch.CreateComment {
 	var comments []ch.CreateComment
 
 	for _, cm := range card.Comments {
 		com := ch.CreateComment{
 			CreatedAt: *cm.CreatedAt,
-			Text:      fmt.Sprintf("%s: %s", cm.Creator, cm.Text),
+			AuthorID:  um.GetCreator(cm.IDCreator),
+			Text:      cm.Text,
 		}
 
 		comments = append(comments, com)
