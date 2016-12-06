@@ -129,3 +129,16 @@ func promptUserSelectResource() int {
 
 	return id
 }
+
+// ListMembers gets the members for the selected board.
+// And fails hard if an err occurs.
+func (t TrelloOptions) ListMembers() *[]trello.Member {
+	m, err := t.Board.Members()
+
+	if err != nil {
+		fmt.Println("Error retrieving board members")
+		log.Fatal(err)
+	}
+
+	return &m
+}

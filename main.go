@@ -26,9 +26,12 @@ func main() {
 	cards := ProcessCardsForExporting(&c, to)
 
 	co := SetupClubhouseOptions()
+	um := NewUserMap(to, co)
+	um.SetupUserMapping()
+
 	confirmAllOptionsBeforeImport(to, co)
 
-	ImportCardsIntoClubhouse(cards, co)
+	ImportCardsIntoClubhouse(cards, co, um)
 	fmt.Println("*** Looks like we finished go and have fun & joy with Clubhouse ***")
 }
 

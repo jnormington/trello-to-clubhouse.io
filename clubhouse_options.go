@@ -17,6 +17,18 @@ type ClubhouseOptions struct {
 	ImportUser               *ch.User
 }
 
+// ListUsers makes the call to Clubhouse package for the list
+// of users. And fails hard if an err occurs.
+func (co *ClubhouseOptions) ListUsers() *[]ch.User {
+	u, err := co.ClubhouseEntry.ListUsers()
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return &u
+}
+
 // SetupClubhouseOptions calls all the functions which consist of questions
 // for building ClubhouseOptions and returns a pointer to ClubhouseOptions instance
 func SetupClubhouseOptions() *ClubhouseOptions {
@@ -74,7 +86,7 @@ func (co *ClubhouseOptions) getUsersAndPromptUser() {
 		log.Fatal(err)
 	}
 
-	fmt.Println("Please select the user account to import the cards as")
+	fmt.Println("Please select a backup user account if a user is not mapped correctly")
 	for i, u := range users {
 		fmt.Printf("[%d] %s\n", i, u.Name)
 	}
