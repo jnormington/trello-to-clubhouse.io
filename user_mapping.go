@@ -42,7 +42,7 @@ func (um *UserMap) SetupUserMapping() {
 
 	if um.GenerateCSV {
 		um.buildUserMapToFile()
-		fmt.Printf("*********************\n CSV generated: %s\n*********************", getCSVPath())
+		fmt.Printf("*********************\n CSV generated: %s\n*********************\n", getCSVPath())
 	}
 
 	um.promptReadyToReadCSV()
@@ -52,9 +52,8 @@ func (um *UserMap) SetupUserMapping() {
 func (um *UserMap) promptReadyToReadCSV() {
 
 	fmt.Println("Is your CSV user mapping correct ?")
-	fmt.Printf("CSV file: %s", getCSVPath())
-	fmt.Println("Are you ready to continue ?")
-	fmt.Println("[1] Yes")
+	fmt.Printf("CSV file: %s\n", getCSVPath())
+	fmt.Printf("Are you ready to continue ?\n[1] Yes")
 
 	i := promptUserSelectResource()
 
