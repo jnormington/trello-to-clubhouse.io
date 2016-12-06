@@ -53,7 +53,7 @@ func (um *UserMap) promptReadyToReadCSV() {
 
 	fmt.Println("Is your CSV user mapping correct ?")
 	fmt.Printf("CSV file: %s\n", getCSVPath())
-	fmt.Printf("Are you ready to continue ?\n[1] Yes")
+	fmt.Printf("Are you ready to continue ?\n[1] Yes\n")
 
 	i := promptUserSelectResource()
 
