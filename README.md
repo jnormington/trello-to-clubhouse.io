@@ -13,8 +13,10 @@ It currently migrates the following from a Trello Card what we felt was valuable
 - Description
 - Labels
 - Due Date
+- Creator
 - Created At
-- Comments (prefixes the original creator)
+- Comments
+- Members ([Requested by @meganchinburg](https://github.com/jnormington/trello-to-clubhouse.io/issues/3))
 - Checklists (and also whether the checklist item is completed)
 - ShortURL (optional comment added with Trello link)
 - Attachments (optional uploads attachments to dropbox)
@@ -58,10 +60,10 @@ Now you have all your tokens you need to set them up as environment variables.
 
 Download the binary for your platform from the list below
 
-- [Windows (x86)](https://github.com/jnormington/trello-to-clubhouse.io/releases/download/v0.1.2/trello_to_clubhouse_windows_x86.exe)
-- [Windows (x64)](https://github.com/jnormington/trello-to-clubhouse.io/releases/download/v0.1.2/trello_to_clubhouse_windows_x64.exe)
-- [Linux (x64)](https://github.com/jnormington/trello-to-clubhouse.io/releases/download/v0.1.2/trello_to_clubhouse_linux_x64)
-- [OSX (x64)](https://github.com/jnormington/trello-to-clubhouse.io/releases/download/v0.1.2/trello_to_clubhouse_osx_x64)
+- [Windows (x86)](https://github.com/jnormington/trello-to-clubhouse.io/releases/download/v0.2.0/trello_to_clubhouse_windows_x86.exe)
+- [Windows (x64)](https://github.com/jnormington/trello-to-clubhouse.io/releases/download/v0.2.0/trello_to_clubhouse_windows_x64.exe)
+- [Linux (x64)](https://github.com/jnormington/trello-to-clubhouse.io/releases/download/v0.2.0/trello_to_clubhouse_linux_x64)
+- [OSX (x64)](https://github.com/jnormington/trello-to-clubhouse.io/releases/download/v0.2.0/trello_to_clubhouse_osx_x64)
 
 
 Then move to the next section for settings the environment variables for your platform
@@ -147,6 +149,22 @@ Please select the story type all cards should be imported as
 Would you like a comment added with the original trello ticket link?
 [0] Yes
 [1] No
+
+To correctly map ticket owners to Clubhouse we need a user mapping CSV.
+If this is the first time running this program you need to generate one.
+We generate a csv of a best guess user mapping which you can edit to be correct
+If you already have one that is correct please select option 1
+Please select your option based on the above information:
+[0] Yes
+[1] No
+
+*********************
+ CSV generated: /home/jon/Documents/userMappingTtoC.csv
+*********************
+Is your CSV user mapping correct ?
+CSV file: /home/jon/Documents/userMappingTtoC.csv
+Are you ready to continue ?
+[1] Yes
 
 ****** WARNING ******
 Please review carefully before you continue
