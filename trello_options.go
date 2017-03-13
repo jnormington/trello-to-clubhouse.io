@@ -122,6 +122,7 @@ func promptUserSelectResource() int {
 	}
 
 	i = strings.TrimRight(i, "\n")
+	i = strings.TrimRight(i, "\r")
 	id, err := strconv.Atoi(i)
 	if err != nil {
 		log.Fatal("Hmm... did you type a number from the list ?")
