@@ -5,6 +5,8 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"net/url"
+	"path/filepath"
 	"regexp"
 	"time"
 
@@ -15,20 +17,27 @@ import (
 var dateLayout = "2006-01-02T15:04:05.000Z"
 var safeFileNameRegexp = regexp.MustCompile(`[^a-zA-Z0-9_.]+`)
 
+var mimeTypes = map[string]string{
+	".gif":  "image/gif",
+	".png":  "image/png",
+	".jpg":  "image/jpeg",
+	".jpeg": "image/jpeg",
+}
+
 // Card holds all the attributes needed for migrating a complete card from Trello to Clubhouse
 type Card struct {
-	Name        string            `json:"name"`
-	Desc        string            `json:"desc"`
-	Labels      []string          `json:"labels"`
-	DueDate     *time.Time        `json:"due_date"`
-	IDCreator   string            `json:"id_creator"`
-	IDOwners    []string          `json:"id_owners"`
-	CreatedAt   *time.Time        `json:"created_at"`
-	Comments    []Comment         `json:"comments"`
-	Tasks       []Task            `json:"checklists"`
-	Position    float32           `json:"position"`
-	ShortURL    string            `json:"url"`
-	Attachments map[string]string `json:"attachments"`
+	Name        string       `json:"name"`
+	Desc        string       `json:"desc"`
+	Labels      []string     `json:"labels"`
+	DueDate     *time.Time   `json:"due_date"`
+	IDCreator   string       `json:"id_creator"`
+	IDOwners    []string     `json:"id_owners"`
+	CreatedAt   *time.Time   `json:"created_at"`
+	Comments    []Comment    `json:"comments"`
+	Tasks       []Task       `json:"checklists"`
+	Position    float32      `json:"position"`
+	ShortURL    string       `json:"url"`
+	Attachments []SharedItem `json:"attachments"`
 }
 
 // Task builds a basic object based off trello.Task
@@ -43,6 +52,13 @@ type Comment struct {
 	IDCreator   string
 	CreatorName string
 	CreatedAt   *time.Time
+}
+
+//SharedItem represents an attachment from Trello
+type SharedItem struct {
+	Name     string
+	URL      string
+	MimeType string
 }
 
 // ProcessCardsForExporting takes *[]trello.Card, *TrelloOptions and builds up a Card
@@ -150,8 +166,8 @@ func parseDateOrReturnNil(strDate string) *time.Time {
 	return &d
 }
 
-func downloadCardAttachmentsUploadToDropbox(card *trello.Card) map[string]string {
-	sharedLinks := map[string]string{}
+func downloadCardAttachmentsUploadToDropbox(card *trello.Card) []SharedItem {
+	var sharedItems []SharedItem
 	d := dropbox.New(dropbox.NewConfig(dropboxToken))
 
 	attachments, err := card.Attachments()
@@ -179,15 +195,44 @@ func downloadCardAttachmentsUploadToDropbox(card *trello.Card) map[string]string
 			// Must be success created a shared url
 			s := dropbox.CreateSharedLinkInput{path, false}
 			out, err := d.Sharing.CreateSharedLink(&s)
+
 			if err != nil {
 				fmt.Printf("Error occurred sharing file on dropbox continuing... %s\n", err)
 			} else {
-				sharedLinks[name] = out.URL
+				u, err := url.Parse(out.URL)
+
+				si := SharedItem{
+					Name:     name,
+					URL:      out.URL,
+					MimeType: determineMimeType(out.Path),
+				}
+
+				if err == nil {
+					// So that we can get the image inline on the ticket
+					// parse it and amend the dl param to 1
+					q := u.Query()
+					q.Set("dl", "1")
+					u.RawQuery = q.Encode()
+
+					fmt.Println("Got here new url: %s", u.String())
+					si.URL = u.String()
+				}
+
+				sharedItems = append(sharedItems, si)
+				fmt.Printf("%#v\n", si)
 			}
 		}
 	}
 
-	return sharedLinks
+	return sharedItems
+}
+
+// determineMimeType supports just determine the mimeType from extention for only the most common
+// image types so that a thumbnail maybe displayed inline on the cluhbouse ticket
+func determineMimeType(path string) string {
+	ext := filepath.Ext(path)
+
+	return mimeTypes[ext]
 }
 
 func downloadTrelloAttachment(attachment *trello.Attachment) io.ReadCloser {

@@ -30,17 +30,19 @@ func ImportCardsIntoClubhouse(cards *[]Card, opts *ClubhouseOptions, um *UserMap
 func buildLinkFiles(card *Card, opts *ClubhouseOptions) []int64 {
 	var ids []int64
 
-	for k, v := range card.Attachments {
+	for _, si := range card.Attachments {
 		lf := ch.CreateLinkedFile{
-			Name:       k,
-			Type:       "url",
-			URL:        v,
-			UploaderID: opts.ImportUser.ID,
+			Name:         si.Name,
+			Type:         "url",
+			URL:          si.URL,
+			ThumbnailURL: si.URL,
+			ContentType:  si.MimeType,
+			UploaderID:   opts.ImportUser.ID,
 		}
 
 		r, err := opts.ClubhouseEntry.CreateLinkedFiles(lf)
 		if err != nil {
-			fmt.Println("Fail to create linked file card name:", card.Name, "Dropbox link:", v, "Err:", err)
+			fmt.Println("Fail to create linked file card name:", card.Name, "Dropbox link:", si.URL, "Err:", err)
 		} else {
 			ids = append(ids, r.ID)
 		}
