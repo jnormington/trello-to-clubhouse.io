@@ -75,7 +75,10 @@ func mapOwnersFromTrelloCard(c *Card, um *UserMap) []string {
 	var owners []string
 
 	for _, o := range c.IDOwners {
-		owners = append(owners, um.GetCreator(o))
+		var owner := um.GetCreatorOrString(o)
+		if owner != "" {
+			owners = append(owners, owner)
+		}
 	}
 
 	return owners
