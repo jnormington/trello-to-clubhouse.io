@@ -204,3 +204,8 @@ func (um UserMap) GetCreator(id string) string {
 
 	return u
 }
+
+func (um UserMap) GetCreatorOrString(id string) string {
+	u := um.Mapping[id]
+	return u
+}
