@@ -14,13 +14,13 @@ type ClubhouseOptions struct {
 	ClubhouseEntry           *ch.Clubhouse
 	StoryType                string
 	AddCommentWithTrelloLink bool
-	ImportUser               *ch.User
+	ImportMember             *ch.Member
 }
 
-// ListUsers makes the call to Clubhouse package for the list
-// of users. And fails hard if an err occurs.
-func (co *ClubhouseOptions) ListUsers() *[]ch.User {
-	u, err := co.ClubhouseEntry.ListUsers()
+// ListMember makes the call to Clubhouse package for the list
+// of members. And fails hard if an err occurs.
+func (co *ClubhouseOptions) ListMembers() *[]ch.Member {
+	u, err := co.ClubhouseEntry.ListMembers()
 
 	if err != nil {
 		log.Fatal(err)
@@ -38,7 +38,7 @@ func SetupClubhouseOptions() *ClubhouseOptions {
 
 	co.getProjectsAndPromptUser()
 	co.getWorkflowStatesAndPromptUser()
-	co.getUsersAndPromptUser()
+	co.getMembersAndPromptUser()
 	co.promptUserForStoryType()
 	co.promptUserIfAddCommentWithTrelloLink()
 
@@ -80,23 +80,23 @@ func (co *ClubhouseOptions) getProjectsAndPromptUser() {
 	co.Project = &projects[i]
 }
 
-func (co *ClubhouseOptions) getUsersAndPromptUser() {
-	users, err := co.ClubhouseEntry.ListUsers()
+func (co *ClubhouseOptions) getMembersAndPromptUser() {
+	members, err := co.ClubhouseEntry.ListMembers()
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	fmt.Println("Please select a backup user account if a user is not mapped correctly")
-	for i, u := range users {
-		fmt.Printf("[%d] %s\n", i, u.Name)
+	for i, u := range members {
+		fmt.Printf("[%d] %s\n", i, u.Profile.Name)
 	}
 
 	i := promptUserSelectResource()
-	if i >= len(users) {
+	if i >= len(members) {
 		log.Fatal(errOutOfRange)
 	}
 
-	co.ImportUser = &users[i]
+	co.ImportMember = &members[i]
 }
 
 func (co *ClubhouseOptions) getWorkflowStatesAndPromptUser() {

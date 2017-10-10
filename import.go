@@ -35,7 +35,7 @@ func buildLinkFiles(card *Card, opts *ClubhouseOptions) []int64 {
 			Name:       k,
 			Type:       "url",
 			URL:        v,
-			UploaderID: opts.ImportUser.ID,
+			UploaderID: opts.ImportMember.ID,
 		}
 
 		r, err := opts.ClubhouseEntry.CreateLinkedFiles(lf)
