@@ -28,7 +28,7 @@ func ImportCardsIntoClubhouse(cards *[]Card, opts *ClubhouseOptions, um *UserMap
 }
 
 func buildLinkFiles(card *Card, opts *ClubhouseOptions) []int64 {
-	var ids []int64
+	ids := []int64{}
 
 	for k, v := range card.Attachments {
 		lf := ch.CreateLinkedFile{
@@ -57,6 +57,8 @@ func buildClubhouseStory(card *Card, opts *ClubhouseOptions, um *UserMap) *ch.Cr
 		RequestedByID:   um.GetCreator(card.IDCreator),
 		OwnerIds:        mapOwnersFromTrelloCard(card, um),
 		StoryType:       opts.StoryType,
+		FollowerIds:     []string{},
+		FileIds:         []int64{},
 
 		Name:        card.Name,
 		Description: card.Desc,
@@ -72,7 +74,7 @@ func buildClubhouseStory(card *Card, opts *ClubhouseOptions, um *UserMap) *ch.Cr
 }
 
 func mapOwnersFromTrelloCard(c *Card, um *UserMap) []string {
-	var owners []string
+	owners := []string{}
 
 	for _, o := range c.IDOwners {
 		owners = append(owners, um.GetCreator(o))
@@ -82,7 +84,7 @@ func mapOwnersFromTrelloCard(c *Card, um *UserMap) []string {
 }
 
 func buildComments(card *Card, addCommentWithTrelloLink bool, um *UserMap) *[]ch.CreateComment {
-	var comments []ch.CreateComment
+	comments := []ch.CreateComment{}
 
 	for _, cm := range card.Comments {
 		com := ch.CreateComment{
@@ -107,7 +109,7 @@ func buildComments(card *Card, addCommentWithTrelloLink bool, um *UserMap) *[]ch
 }
 
 func buildTasks(card *Card) *[]ch.CreateTask {
-	var tasks []ch.CreateTask
+	tasks := []ch.CreateTask{}
 
 	for _, t := range card.Tasks {
 		ts := ch.CreateTask{
@@ -122,7 +124,7 @@ func buildTasks(card *Card) *[]ch.CreateTask {
 }
 
 func buildLabels(card *Card) *[]ch.CreateLabel {
-	var labels []ch.CreateLabel
+	labels := []ch.CreateLabel{}
 
 	for _, l := range card.Labels {
 		labels = append(labels, ch.CreateLabel{Name: l})
