@@ -115,6 +115,10 @@ func (co *ClubhouseOptions) getWorkflowStatesAndPromptUser() {
 	var options []worfklowState
 
 	for wIdx, w := range workflows {
+		if w.TeamID != co.Project.TeamID {
+			continue
+		}
+
 		for sIdx, s := range w.States {
 			options = append(options, worfklowState{
 				WorkflowIdx: wIdx,
