@@ -17,6 +17,12 @@ type ClubhouseOptions struct {
 	ImportMember             *ch.Member
 }
 
+type worfklowState struct {
+	WorkflowIdx int
+	StateIdx    int
+	DisplayText string
+}
+
 // ListMember makes the call to Clubhouse package for the list
 // of members. And fails hard if an err occurs.
 func (co *ClubhouseOptions) ListMembers() *[]ch.Member {
@@ -106,22 +112,29 @@ func (co *ClubhouseOptions) getWorkflowStatesAndPromptUser() {
 	}
 
 	fmt.Println("Please select a workflow state to import the cards into")
-	var statesLen int
+	var options []worfklowState
 
-	for _, w := range workflows {
-		statesLen += len(w.States)
-
-		for i, s := range w.States {
-			fmt.Printf("[%d] %s\n", i, s.Name)
+	for wIdx, w := range workflows {
+		for sIdx, s := range w.States {
+			options = append(options, worfklowState{
+				WorkflowIdx: wIdx,
+				StateIdx:    sIdx,
+				DisplayText: fmt.Sprintf("%s - %s", w.Name, s.Name),
+			})
 		}
 	}
 
+	for i, o := range options {
+		fmt.Printf("[%d] %s\n", i, o.DisplayText)
+	}
+
 	i := promptUserSelectResource()
-	if i >= statesLen {
+	if i >= len(options) {
 		log.Fatal(errOutOfRange)
 	}
 
-	co.State = &workflows[0].States[i]
+	selected := options[i]
+	co.State = &workflows[selected.WorkflowIdx].States[selected.StateIdx]
 }
 
 func (co *ClubhouseOptions) promptUserForStoryType() {
