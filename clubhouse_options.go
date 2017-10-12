@@ -111,7 +111,7 @@ func (co *ClubhouseOptions) getWorkflowStatesAndPromptUser() {
 		log.Fatal(err)
 	}
 
-	fmt.Println("Please select a workflow state to import the cards into")
+	fmt.Printf("Please select a workflow state linked to '%s' - to import the trello cards into\n", co.Project.Name)
 	var options []worfklowState
 
 	for wIdx, w := range workflows {
