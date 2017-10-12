@@ -14,13 +14,19 @@ type ClubhouseOptions struct {
 	ClubhouseEntry           *ch.Clubhouse
 	StoryType                string
 	AddCommentWithTrelloLink bool
-	ImportUser               *ch.User
+	ImportMember             *ch.Member
 }
 
-// ListUsers makes the call to Clubhouse package for the list
-// of users. And fails hard if an err occurs.
-func (co *ClubhouseOptions) ListUsers() *[]ch.User {
-	u, err := co.ClubhouseEntry.ListUsers()
+type worfklowState struct {
+	WorkflowIdx int
+	StateIdx    int
+	DisplayText string
+}
+
+// ListMember makes the call to Clubhouse package for the list
+// of members. And fails hard if an err occurs.
+func (co *ClubhouseOptions) ListMembers() *[]ch.Member {
+	u, err := co.ClubhouseEntry.ListMembers()
 
 	if err != nil {
 		log.Fatal(err)
@@ -38,7 +44,7 @@ func SetupClubhouseOptions() *ClubhouseOptions {
 
 	co.getProjectsAndPromptUser()
 	co.getWorkflowStatesAndPromptUser()
-	co.getUsersAndPromptUser()
+	co.getMembersAndPromptUser()
 	co.promptUserForStoryType()
 	co.promptUserIfAddCommentWithTrelloLink()
 
@@ -80,23 +86,23 @@ func (co *ClubhouseOptions) getProjectsAndPromptUser() {
 	co.Project = &projects[i]
 }
 
-func (co *ClubhouseOptions) getUsersAndPromptUser() {
-	users, err := co.ClubhouseEntry.ListUsers()
+func (co *ClubhouseOptions) getMembersAndPromptUser() {
+	members, err := co.ClubhouseEntry.ListMembers()
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	fmt.Println("Please select a backup user account if a user is not mapped correctly")
-	for i, u := range users {
-		fmt.Printf("[%d] %s\n", i, u.Name)
+	for i, u := range members {
+		fmt.Printf("[%d] %s\n", i, u.Profile.Name)
 	}
 
 	i := promptUserSelectResource()
-	if i >= len(users) {
+	if i >= len(members) {
 		log.Fatal(errOutOfRange)
 	}
 
-	co.ImportUser = &users[i]
+	co.ImportMember = &members[i]
 }
 
 func (co *ClubhouseOptions) getWorkflowStatesAndPromptUser() {
@@ -105,23 +111,34 @@ func (co *ClubhouseOptions) getWorkflowStatesAndPromptUser() {
 		log.Fatal(err)
 	}
 
-	fmt.Println("Please select a workflow state to import the cards into")
-	var statesLen int
+	fmt.Printf("Please select a workflow state linked to '%s' - to import the trello cards into\n", co.Project.Name)
+	var options []worfklowState
 
-	for _, w := range workflows {
-		statesLen += len(w.States)
+	for wIdx, w := range workflows {
+		if w.TeamID != co.Project.TeamID {
+			continue
+		}
 
-		for i, s := range w.States {
-			fmt.Printf("[%d] %s\n", i, s.Name)
+		for sIdx, s := range w.States {
+			options = append(options, worfklowState{
+				WorkflowIdx: wIdx,
+				StateIdx:    sIdx,
+				DisplayText: fmt.Sprintf("%s - %s", w.Name, s.Name),
+			})
 		}
 	}
 
+	for i, o := range options {
+		fmt.Printf("[%d] %s\n", i, o.DisplayText)
+	}
+
 	i := promptUserSelectResource()
-	if i >= statesLen {
+	if i >= len(options) {
 		log.Fatal(errOutOfRange)
 	}
 
-	co.State = &workflows[0].States[i]
+	selected := options[i]
+	co.State = &workflows[selected.WorkflowIdx].States[selected.StateIdx]
 }
 
 func (co *ClubhouseOptions) promptUserForStoryType() {
